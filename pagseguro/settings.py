@@ -59,6 +59,23 @@ if DEBUG:
     MIDDLEWARE.insert(0, 'debug_toolbar.middleware.DebugToolbarMiddleware')
 
 
+# Cloudinary
+CLOUDINARY_URL = config('CLOUDINARY_URL', default=False)
+
+if CLOUDINARY_URL:  # pragma: no cover
+    INSTALLED_APPS.remove('django.contrib.staticfiles')
+    INSTALLED_APPS = [
+        'cloudinary_storage',
+        'django.contrib.staticfiles',
+        'cloudinary',
+    ] + INSTALLED_APPS
+
+    COLLECTFAST_ENABLED = False
+
+    DEFAULT_FILE_STORAGE = 'cloudinary_storage.storage.RawMediaCloudinaryStorage'
+    STATICFILES_STORAGE = 'cloudinary_storage.storage.StaticCloudinaryStorage'
+
+
 default_db_url = 'sqlite:///' + os.path.join(BASE_DIR, 'db.sqlite3')
 
 parse_database = partial(dj_database_url.parse, conn_max_age=600)
@@ -90,5 +107,11 @@ USE_TZ = True
 
 STATIC_URL = '/static/'
 STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
+
+# Media Files (Uploads)
+MEDIA_URL = "/media/"
+MEDIA_ROOT = os.path.join(BASE_DIR, "mediafiles")
+
+COLLECTFAST_ENABLED = False
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
