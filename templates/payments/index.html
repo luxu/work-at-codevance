@@ -1,0 +1,49 @@
+{% extends 'base.html' %}
+{% load humanize %}
+
+{% block content %}
+    <div class="container">
+        <div class="jumbotron">
+            <h3>
+                <p>Fornecedor: {{ provider }}</p>
+                <p>Valor do Recebível: {{ payment.original_value }}</p>
+            </h3>
+        </div>
+        {% if not payments and not value_new %}
+            <h3>Fornecedores</h3>
+            <form action="{% url 'choice_trade' %}">
+                <select name="provider" hx-get="/choice_trade" hx-target="#models" hx-indicator=".htmx-indicator">
+                    <option value="">Escolha um comércio</option>
+                    {% for provider in providers %}
+                        <option value="{{ provider.id }}">{{ provider.corporate_name }}</option>
+                    {% endfor %}
+                </select>
+                <button class="btn btn-primary" type="submit">Enviar</button>
+            </form>
+        {% endif %}
+        <div>
+            {% if payments %}
+                <label for="">Recebíveis</label>
+                <form action="{% url 'calculate' %}">
+                    <select name="payment_id">
+                        <option value="">Selecione o Pagamento</option>
+                        {% for payment in payments %}
+                            <option value="{{ payment.id }}">{{ payment.original_value }}</option>
+                        {% endfor %}
+                    </select>
+                    <button class="btn btn-primary" type="submit">Enviar</button>
+                </form>
+            {% endif %}
+        </div>
+        <div>
+            {% if value_new %}
+                <h3>Data Hoje..: {{ date_now }}</h3>
+                <h3>Data Recebíveis..: {{ payment.due_date }}</h3>
+                <h3>Diferença de dias..: {{ difference_of_days }}</h3>
+                <h3>Juros de..: {{ fees }}</h3>
+                <h3>Total a descontar..: {{ discount | floatformat:"2"| intcomma }}</h3>
+                <h3>Valor a receber..: {{ value_new | floatformat:"2"| intcomma }}</h3>
+            {% endif %}
+        </div>
+    </div>
+{% endblock content %}

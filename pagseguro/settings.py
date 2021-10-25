@@ -20,6 +20,10 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'django.contrib.humanize',
+    'django_htmx',
+    'providers',
+    'payments',
 ]
 
 MIDDLEWARE = [
@@ -30,6 +34,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'django_htmx.middleware.HtmxMiddleware',
 ]
 
 ROOT_URLCONF = 'pagseguro.urls'
@@ -37,7 +42,7 @@ ROOT_URLCONF = 'pagseguro.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
+        'DIRS': [os.path.join(BASE_DIR, "templates")],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -58,23 +63,21 @@ if DEBUG:
     INSTALLED_APPS.append('debug_toolbar')
     MIDDLEWARE.insert(0, 'debug_toolbar.middleware.DebugToolbarMiddleware')
 
-
 # Cloudinary
 CLOUDINARY_URL = config('CLOUDINARY_URL', default=False)
 
 if CLOUDINARY_URL:  # pragma: no cover
     INSTALLED_APPS.remove('django.contrib.staticfiles')
     INSTALLED_APPS = [
-        'cloudinary_storage',
-        'django.contrib.staticfiles',
-        'cloudinary',
-    ] + INSTALLED_APPS
+                         'cloudinary_storage',
+                         'django.contrib.staticfiles',
+                         'cloudinary',
+                     ] + INSTALLED_APPS
 
     COLLECTFAST_ENABLED = False
 
     DEFAULT_FILE_STORAGE = 'cloudinary_storage.storage.RawMediaCloudinaryStorage'
     STATICFILES_STORAGE = 'cloudinary_storage.storage.StaticCloudinaryStorage'
-
 
 default_db_url = 'sqlite:///' + os.path.join(BASE_DIR, 'db.sqlite3')
 
