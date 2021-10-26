@@ -1,7 +1,13 @@
+from django.contrib.auth.models import User
 from django.db import models
 
 
 class Providers(models.Model):
+    user = models.ForeignKey(
+        User,
+        on_delete=models.CASCADE,
+        null=True
+    )
     cnpj = models.CharField(
         max_length=14,
     )
@@ -17,4 +23,3 @@ class Providers(models.Model):
     class Meta:
         verbose_name = 'Fornecedor'
         verbose_name_plural = 'Fornecedores'
-

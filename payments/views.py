@@ -1,60 +1,48 @@
-import datetime
-
+from django.http import HttpResponseRedirect
 from django.shortcuts import render
 
-from payments.models import Payments
 from providers.models import Providers
+from .forms import PaymentsForm
+from .models import Payments
 
 
 def index(request):
-    template_name = 'payments/index.html'
-    trades = (
-        ('baixinho', 'Baixinho Lanches'),
-        ('escola', 'Escola Mais'),
-        ('mari', 'Marinaul'),
-    )
-    providers = Providers.objects.all()
+    template_name = 'index.html'
+    payments = Providers.objects.get(user=request.user.id)
     context = {
-        'providers': providers
+        'payments': payments.payments_set.all()
     }
     return render(request, template_name, context)
 
 
-def choice_trade(request):
-    template_name = 'payments/index.html'
-    provider = request.GET.get('provider')
-    payments = Payments.objects.filter(provider=provider)
+def advance_request(request, id):
+    payments = Payments.objects.get(id=id)
+    payments.decision = Payments.AGUARDANDO_LIBERACAO
+    payments.save()
+    return HttpResponseRedirect('/payments')
+
+
+def list_payments(request):
+    template_name = 'payments/list_payments.html'
+    payments = Payments.objects.all()
     context = {
-        'payments': payments,
-        'provider': payments.first().provider
+        'payments': payments
     }
     return render(request, template_name, context)
 
 
-def calculate(request):
-    template_name = 'payments/index.html'
-    payment_id = request.GET.get('payment_id')
-    payment = Payments.objects.get(id=payment_id)
-    try:
-        original_value = float(payment.original_value.replace(',', '.'))
-    except:
-        original_value = float(payment.original_value)
-    date_now = datetime.datetime.now()
-    date_due_date = payment.due_date
-    difference_of_days = (date_due_date - date_now.date()).days
-    fees = (3 * 1 / 100)
-    # NOVO_VALOR = VALOR_ORIGINAL - (VALOR_ORIGINAL * ((3 % / 30) * DIFERENCA_DE_DIAS))
-    # 1000 - (1000 * (((3*1/100) / 30) * 16))
-    value_new = original_value - (original_value * ((fees / 30) * difference_of_days))
-    discount = original_value - value_new
-    provider = payment.provider
+def add_payments(request):
+    template_name = 'payments/form_payments.html'
+    if request.method == 'POST':
+        form = PaymentsForm(request.POST)
+        if form.is_valid():
+            obj = form.save(commit=False)
+            obj.decision = 0
+            obj.save()
+            return HttpResponseRedirect('/payments/')
+    else:
+        form = PaymentsForm()
     context = {
-        'value_new': value_new,
-        'payment': payment,
-        'difference_of_days': difference_of_days,
-        'date_now': date_now,
-        'fees': fees,
-        'discount': discount,
-        'provider': provider
+        'form': form
     }
     return render(request, template_name, context)

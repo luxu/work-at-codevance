@@ -1,0 +1,37 @@
+{% extends 'base.html' %}
+
+{% block content %}
+    <div class="container">
+        <div class="jumbotron">
+            <a href="{% url 'add_providers' %}">Adicionar Fornecedor</a>
+            <table class="table table-condensed">
+                <thead>
+                <tr>
+                    <th>Nome do Fornecedor</th>
+                    <th>CNPJ</th>
+                    <th style="text-align: center">Ações</th>
+                </tr>
+                </thead>
+                <tbody>
+                {% if providers %}
+                    {% for provider in providers %}
+                        <tr>
+                            <td>{{ provider.corporate_name }}</td>
+                            <td>{{ provider.cnpj }}</td>
+                            <td style="text-align: center">
+                                <a href="{% url 'edit_providers' provider.id %}"><i class="fa fa-edit"></i></a>
+                                <a href="{% url 'delete_providers' provider.id %}"><i class="fa fa-trash"></i></a>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                {% else %}
+                    <tr>
+                        <td>Não há fornecedores!!</td>
+                    </tr>
+                {% endif %}
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+{% endblock content %}

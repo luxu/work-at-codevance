@@ -1,0 +1,22 @@
+{% extends 'base.html' %}
+
+{% block content %}
+    <div class="container">
+        <div class="jumbotron">
+            <h3>Será apagado o {{ provider.corporate_name }}. Confirmar?</h3>
+            <form action="" method="POST">
+                {% csrf_token %}
+                <input type="hidden" name="id" value="{{ provider.id }}">
+                <div class="form-control">
+                    <label for="c_delete">Sim</label>
+                    <input name="c_delete" type="radio" value="Sim">
+                </div>
+                <div class="form-control">
+                    <label for="c_delete">Não</label>
+                    <input name="c_delete" type="radio" value="Não">
+                </div>
+                <button class="btn btn-primary" type="submit">Confirmar</button>
+            </form>
+        </div>
+    </div>
+{% endblock content %}

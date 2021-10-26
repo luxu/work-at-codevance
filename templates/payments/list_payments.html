@@ -1,0 +1,41 @@
+{% extends 'base.html' %}
+
+{% block content %}
+    <div class="container">
+        <div class="jumbotron">
+            <a href="{% url 'add_payments' %}">Adicionar Pagamento</a>
+            <table class="table table-condensed">
+                <thead>
+                <tr>
+                    <th>Nome do Fornecedor</th>
+                    <th>Data da emissão</th>
+                    <th>Data do vencimento</th>
+                    <th>Valor Original</th>
+                    <th style="text-align: center">Ações</th>
+                </tr>
+                </thead>
+                <tbody>
+                {% if payments %}
+                    {% for payment in payments %}
+                        <tr>
+                            <td>{{ payment.provider }}</td>
+                            <td>{{ payment.issue_date }}</td>
+                            <td>{{ payment.due_date }}</td>
+                            <td>{{ payment.original_value }}</td>
+                            <td style="text-align: center">
+                                <a href=" url 'edit_payments' payment.id %}"><i class="fa fa-edit"></i></a>
+                                <a href=" url 'delete_payments' payment.id %}"><i class="fa fa-trash"></i></a>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                {% else %}
+                    <tr>
+                        <td>Não há pagamentos!!</td>
+                    </tr>
+                {% endif %}
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+{% endblock content %}

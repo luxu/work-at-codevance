@@ -21,7 +21,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'django.contrib.humanize',
-    'django_htmx',
+    'django_seed',
     'providers',
     'payments',
 ]
@@ -116,5 +116,13 @@ MEDIA_URL = "/media/"
 MEDIA_ROOT = os.path.join(BASE_DIR, "mediafiles")
 
 COLLECTFAST_ENABLED = False
+
+DECIMAL_SEPARATOR = ','
+USE_THOUSAND_SEPARATOR = True
+
+LOGIN_URL = '/login'
+LOGIN_REDIRECT_URL = '/'
+LOGOUT_URL = '/logout'
+LOGOUT_REDIRECT_URL = '/login'
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'

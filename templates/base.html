@@ -10,20 +10,35 @@
 <header>
     <nav class="navbar justify-content-end navbar-expand-lg">
         <ul class="nav">
-            <li class="nav-item"><a class="nav-link" href="/">
-                <i class="fa fa-home"></i>Home</a></li>
+            {% if user.is_superuser %}
+                <li class="nav-item"><a class="nav-link" href="/">
+                    <i class="fa fa-home"></i>Home</a>
+                </li>
+            {% else %}
+                <li class="nav-item"><a class="nav-link" href="/payments">
+                    <i class="fa fa-home"></i>Home</a>
+                </li>
+            {% endif %}
+            {% if user.is_authenticated and user.is_superuser %}
+                <li class="nav-item"><a class="nav-link" href="{% url 'index_providers' %}">
+                    <i class="fa fa-edit"></i>Fornecedores</a>
+                </li>
+                <li class="nav-item"><a class="nav-link" href="{% url 'list_payments' %}">
+                    <i class="fa fa-edit"></i>Pagamentos</a>
+                </li>
+            {% endif %}
             {% if user.is_authenticated %}
+                <span>
+                    {{ user.username }}
+                </span>
                 <li class="nav-item">
-                    <a class="nav-link" href="#">
+                    <a class="nav-link" href="{% url 'logout' %}">
                         <i class="fa fa-sign-out"></i>Sair
                     </a>
                 </li>
             {% else %}
-                <li class="nav-item"><a class="nav-link" href="#">
+                <li class="nav-item"><a class="nav-link" href="{% url 'login' %}">
                     <i class="fa fa-sign-in"></i>Entrar</a></li>
-                <li class="nav-item"><a class="nav-link" href="#">
-                    <i class="fa fa-edit"></i>Registrar</a>
-                </li>
             {% endif %}
         </ul>
     </nav>
