@@ -2,14 +2,22 @@ import datetime
 
 from django.contrib.auth import authenticate, login, logout
 from django.shortcuts import redirect, render
+from django.conf import settings
+from django.core.mail import send_mail
+from django.template.loader import render_to_string
+from django.utils.html import strip_tags
 
 from payments.models import Payments
 from .forms import LoginForm
 
 
 def index(request):
-    template_name = 'core/index.html'
-    payments = Payments.objects.filter(decision=3)
+    if request.user.is_superuser:
+        template_name = 'auth/index.html'
+        payments = Payments.objects.filter(decision=3)
+    else:
+        template_name = 'index.html'
+        payments = Payments.objects.filter(decision=3)
     context = {
         'payments': payments
     }
@@ -17,17 +25,19 @@ def index(request):
 
 
 def choice_payment(request):
-    template_name = 'core/index.html'
+    template_name = 'auth/index.html'
     payment_id = request.GET.get('payment')
     payment = Payments.objects.get(id=payment_id)
+    provider = payment.provider
     context = {
         'payment': payment,
+        'provider': provider,
     }
     return render(request, template_name, context)
 
 
 def calculate(request):
-    template_name = 'core/index.html'
+    template_name = 'auth/index.html'
     decision = request.GET.get('decision')
     payment_id = request.GET.get('payment_id')
     payment = Payments.objects.get(id=payment_id)
@@ -61,6 +71,7 @@ def calculate(request):
         payment.decision = Payments.NEGADOS
         context = {}
         payment.save()
+    send_email_movement(request, payment)
     return render(request, template_name, context)
 
 
@@ -107,3 +118,29 @@ def login_view(request):
 def logout_view(request):
     logout(request)
     return redirect('/login')
+
+
+def send_email_movement(request, payment):
+    decision = [r[1] for r in payment.DECISION_STATUS if r[0] == payment.decision]
+    context = {
+        'payment': payment,
+        'decision': decision[0]
+    }
+    try:
+        html_message = render_to_string(
+            'payments/email.html',
+            context
+        )
+        message = strip_tags(html_message)
+        send_mail(
+            subject="Solicitação de Recebíveis",
+            message=message,
+            html_message=html_message,
+            from_email=settings.EMAIL_HOST_USER,
+            recipient_list=[
+                request.user.email
+            ],
+            fail_silently=False,
+        )
+    except Exception:
+        raise Exception

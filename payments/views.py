@@ -1,13 +1,15 @@
+from django.core.mail import send_mail
 from django.http import HttpResponseRedirect
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 
+from core.views import send_email_movement
 from providers.models import Providers
 from .forms import PaymentsForm
 from .models import Payments
 
 
 def index(request):
-    template_name = 'index.html'
+    template_name = 'core/index.html'
     payments = Providers.objects.get(user=request.user.id)
     context = {
         'payments': payments.payments_set.all()
@@ -16,10 +18,11 @@ def index(request):
 
 
 def advance_request(request, id):
-    payments = Payments.objects.get(id=id)
-    payments.decision = Payments.AGUARDANDO_LIBERACAO
-    payments.save()
-    return HttpResponseRedirect('/payments')
+    payment = Payments.objects.get(id=id)
+    payment.decision = Payments.AGUARDANDO_CONFIRMACAO
+    payment.save()
+    send_email_movement(request, payment)
+    return redirect('/payments/')
 
 
 def list_payments(request):
@@ -39,7 +42,7 @@ def add_payments(request):
             obj = form.save(commit=False)
             obj.decision = 0
             obj.save()
-            return HttpResponseRedirect('/payments/')
+            return HttpResponseRedirect('/payments/list_payments')
     else:
         form = PaymentsForm()
     context = {

@@ -5,15 +5,17 @@ from providers.models import Providers
 
 class Payments(models.Model):
     SEM_PEDIDO = 0
-    APROVADOS = 1
-    NEGADOS = 2
-    AGUARDANDO_LIBERACAO = 3
+    ANTECIPADO = 1
+    NEGADO = 2
+    AGUARDANDO_CONFIRMACAO = 3
+    INDISPONIVEL = 3
 
     DECISION_STATUS = (
         (0, "Sem pedido"),
-        (1, "Aprovado"),
+        (1, "Antecipado"),
         (2, "Negado"),
-        (3, "Aguardando liberação"),
+        (3, "Aguardando confirmação"),
+        (4, "Indisponível"),
     )
 
     provider = models.ForeignKey(

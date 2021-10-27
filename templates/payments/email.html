@@ -1,0 +1,11 @@
+<h3 style="text-transform: uppercase">Solicitação de Pagamento</h3>
+<br>
+
+Olá querido(a) {{ payment }}, tudo bem, esperamos que sim.
+Sua solicitação para antecipar o pagamento
+da data {{ payment.due_date }} no valor de R$ {{ payment.original_value }}
+está com o status: {{ decision | upper }}
+
+<br>
+
+<small>Atenciosamente, equipe de Administadora PAGSEGURO</small>

@@ -1,52 +1,53 @@
 {% extends 'base.html' %}
-{% load humanize %}
+{% load static %}
 
 {% block content %}
     <div class="container">
-        <div class="jumbotron">
-            <h3>
-                <p>Fornecedor: {{ provider }}</p>
-                <p>Valor do Recebível: {{ payment.original_value }}</p>
-            </h3>
-        </div>
-
-        <h3>Pedidos</h3>
-        <form action="{% url 'choice_payment' %}">
-            <select name="payment" hx-get="/choice_trade" hx-target="#models" hx-indicator=".htmx-indicator">
-                <option value="">Escolha um comércio</option>
-                {% for payment in payments %}
-                    <option value="{{ payment.id }}">{{ payment.provider }}-{{ payment.due_date }}</option>
-                {% endfor %}
-            </select>
-            <button class="btn btn-primary" type="submit">Enviar</button>
-        </form>
-
         <div>
-            <form action="{% url 'calculate' %}">
-                {% csrf_token %}
-                <input name="payment_id" type="hidden" value="{{ payment.id }}">
-                <h3>Dados do Recebível</h3>
-                <div>
-                    Data do vencimento.:<p>{{ payment.due_date }}</p>
-                    Valor Original.:<p>{{ payment.original_value }}</p>
-                </div>
-
-                <div class="form-control">
-                    <label for="">Liberar para receber?</label>
-                    <input name="decision" value="1" type="radio">Sim
-                    <input name="decision" value="0" type="radio" checked>Não
-                </div>
-                <button class="btn btn-primary" type="submit">Enviar</button>
-            </form>
-        </div>
-        <div>
-            {% if value_new %}
-                <h3>Data Hoje..: {{ date_now }}</h3>
-                <h3>Data Recebíveis..: {{ payment.due_date }}</h3>
-                <h3>Diferença de dias..: {{ difference_of_days }}</h3>
-                <h3>Juros de..: {{ fees }}</h3>
-                <h3>Total a descontar..: {{ discount | floatformat:"2"| intcomma }}</h3>
-                <h3>Valor a receber..: {{ value_new | floatformat:"2"| intcomma }}</h3>
+            {% if payments %}
+                <table class="table table-condensed">
+                    <thead>
+                    <tr>
+                        <th>Data do vencimento</th>
+                        <th>Data da antecipação</th>
+                        <th>Valor Original</th>
+                        <th>Valor com Desconto</th>
+                        <th>Valor Final</th>
+                        <th style="text-align: center">Decisão</th>
+                        <th style="text-align: center">Ações</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    {% for payment in payments %}
+                        <tr>
+                            <td>{{ payment.due_date }}</td>
+                            {% if payment.advance_date %}
+                                <td>{{ payment.advance_date }}</td>
+                            {% else %}
+                                <td>___/___/____</td>
+                            {% endif %}
+                            <td>{{ payment.original_value }}</td>
+                            <td>{{ payment.discount_value }}</td>
+                            <td>{{ payment.value_new }}</td>
+                            {% if payment.decision == 0 %}
+                                <td>SEM PEDIDO</td>
+                                <td style="text-align: center">
+                                    <a href="{% url 'advance_request' payment.id %}">Antecipar?</a>
+                                </td>
+                            {% elif payment.decision == 1 %}
+                                <td>ANTECIPADO</td>
+                            {% elif payment.decision == 2 %}
+                                <td>NEGADO</td>
+                            {% elif payment.decision == 3 %}
+                                <td>AGUARDANDO CONFIRMAÇÃO</td>
+                            {% else %}
+                                <td>INDISPONÍVEL</td>
+                            {% endif %}
+                        </tr>
+                    {% endfor %}
+                    </tr>
+                    </tbody>
+                </table>
             {% endif %}
         </div>
     </div>

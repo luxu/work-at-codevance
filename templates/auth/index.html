@@ -1,0 +1,68 @@
+{% extends 'base.html' %}
+{% load humanize %}
+
+{% block content %}
+    <div class="container">
+        <div class="jumbotron">
+            <h3>
+                <p>Fornecedor: {{ provider }}</p>
+                <p>Valor do Recebível: {{ payment.original_value }}</p>
+            </h3>
+        </div>
+
+        <div class="jumbotron">
+            <div class="col-md-12" style="padding-left: 0">
+                <h3>Pedidos</h3>
+            </div>
+            <form action="{% url 'choice_payment' %}" class="row g-3">
+                <div class="col-md-12">
+                    <select name="payment" hx-get="/choice_trade" hx-target="#models"
+                            hx-indicator=".htmx-indicator">
+                        <option value="">Escolha um comércio</option>
+                        {% for payment in payments %}
+                            <option value="{{ payment.id }}">{{ payment.provider }}-{{ payment.due_date }}</option>
+                        {% endfor %}
+                    </select>
+                    <button class="btn btn-primary" type="submit">Enviar</button>
+                </div>
+            </form>
+
+            <form action="{% url 'calculate' %}" class="row g-3">
+                {% csrf_token %}
+                <div class="col-md-12">
+                    <input name="payment_id" type="hidden" value="{{ payment.id }}">
+                    <h3>Dados do Recebível</h3>
+                    <div class="col-md-12">
+                        <p>Fornecedor.: <strong>{{ provider }}</strong></p>
+                        <p>Data do vencimento.: <strong>{{ payment.due_date }}</strong></p>
+                        <p>Valor Original.: <strong>{{ payment.original_value }}</strong></p>
+                    </div>
+                </div>
+                <div class="col-md-12">
+                    <h4>Liberar para receber?</h4>
+                    <div class="form-check">
+                        <input class="form-check-input" type="radio" name="decision" id="decision1" value="1">
+                        <label class="form-check-label" for="decision1">Sim</label>
+                    </div>
+                    <div class="form-check">
+                        <input class="form-check-input" type="radio" name="decision" id="decision2" value="0" checked>
+                        <label class="form-check-label" for="decision2">Não</label>
+                    </div>
+                </div>
+                <div class="col-12">
+                    <button class="btn btn-primary" type="submit">Enviar</button>
+                </div>
+            </form>
+        </div>
+        <div>
+            {% if value_new %}
+                <h3>Data Hoje..: {{ date_now }}</h3>
+                <h3>Data Recebíveis..: {{ payment.due_date }}</h3>
+                <h3>Diferença de dias..: {{ difference_of_days }}</h3>
+                <h3>Juros de..: {{ fees }}</h3>
+                <h3>Total a descontar..: {{ discount | floatformat:"2"| intcomma }}</h3>
+                <h3>Valor a receber..: {{ value_new | floatformat:"2"| intcomma }}</h3>
+            {% endif %}
+        </div>
+    </div>
+{% endblock content %}
