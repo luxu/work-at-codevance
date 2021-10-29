@@ -62,25 +62,15 @@ def calculate(request):
             'discount': discount,
             'provider': provider
         }
-        payment.decision = Payments.APROVADOS
+        payment.decision = Payments.ANTECIPADO
         payment.discount_value = discount
         payment.value_new = value_new
         payment.advance_date = date_now
         payment.save()
     else:
-        payment.decision = Payments.NEGADOS
+        payment.decision = Payments.NEGADO
         context = {}
         payment.save()
-    logs = PaymentsLogs()
-    logs.objects.create(
-        payment=payment.payment,
-        issue_date=payment.issue_date,
-        due_date=payment.due_date,
-        original_value=payment.original_value,
-        decision=payment.decision,
-        discount_value=payment.discount_value,
-        value_new=payment.value_new,
-    )
     send_email_movement(request, payment)
     return render(request, template_name, context)
 
@@ -152,5 +142,15 @@ def send_email_movement(request, payment):
             ],
             fail_silently=False,
         )
+        logs = PaymentsLogs(
+            provider=payment.provider,
+            issue_date=payment.issue_date,
+            due_date=payment.due_date,
+            original_value=payment.original_value,
+            decision=payment.decision,
+            discount_value=payment.discount_value,
+            value_new=payment.value_new,
+        )
+        logs.save()
     except Exception:
-        raise Exception
+        pass

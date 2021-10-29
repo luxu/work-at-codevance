@@ -18,7 +18,7 @@
                 <div class="col-md-12">
                     <select name="payment" hx-get="/choice_trade" hx-target="#models"
                             hx-indicator=".htmx-indicator">
-                        <option value="">Escolha um comércio</option>
+                        <option value="">Escolha um fornecedor</option>
                         {% for payment in payments %}
                             <option value="{{ payment.id }}">{{ payment.provider }}-{{ payment.due_date }}</option>
                         {% endfor %}

@@ -1,5 +1,6 @@
+import datetime
+
 from django.contrib.auth.decorators import login_required
-from django.core.mail import send_mail
 from django.http import HttpResponseRedirect
 from django.shortcuts import render, redirect
 
@@ -12,8 +13,17 @@ from .models import Payments, PaymentsLogs
 def index(request):
     template_name = 'core/index.html'
     payments = Providers.objects.get(user=request.user.id)
+    payments = payments.payments_set.all()
+    date_today = datetime.datetime.now().date()
+    list_payments = []
+    for payment in payments:
+        difference_of_days = (payment.due_date - date_today).days
+        if difference_of_days == 0:
+            payment.decision = 4
+            payment.save()
+        list_payments.append(payment)
     context = {
-        'payments': payments.payments_set.all()
+        'payments': list_payments
     }
     return render(request, template_name, context)
 
@@ -23,16 +33,6 @@ def advance_request(request, id):
     payment.decision = Payments.AGUARDANDO_CONFIRMACAO
     payment.save()
     send_email_movement(request, payment)
-    logs = PaymentsLogs()
-    logs.objects.create(
-        payment=payment.payment,
-        issue_date=payment.issue_date,
-        due_date=payment.due_date,
-        original_value=payment.original_value,
-        decision=payment.decision,
-        discount_value=payment.discount_value,
-        value_new=payment.value_new,
-    )
     return redirect('/payments/')
 
 
@@ -54,10 +54,20 @@ def add_payments(request):
             obj = form.save(commit=False)
             obj.decision = 0
             obj.save()
+            send_email_movement(request, obj)
             return HttpResponseRedirect('/payments/list_payments')
     else:
         form = PaymentsForm()
     context = {
         'form': form
+    }
+    return render(request, template_name, context)
+
+
+def logs(request):
+    template_name = 'payments/logs.html'
+    logs = PaymentsLogs.objects.all()
+    context = {
+        'logs': logs
     }
     return render(request, template_name, context)

@@ -22,6 +22,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'django.contrib.humanize',
+    'django_extensions',
     'rest_framework',
     'rest_framework_simplejwt',
     'providers',
@@ -93,7 +94,7 @@ if 'test' in DATABASE_TO_TEST:
             'NAME': BASE_DIR / 'test_db.sqlite3',
         }
     }
-else:
+elif 'production' in DATABASE_TO_TEST:
     DATABASES = {
         'default': config('DATABASE_URL', default=default_db_url, cast=parse_database)
     }

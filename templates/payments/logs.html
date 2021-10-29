@@ -3,7 +3,7 @@
 {% block content %}
     <div class="container">
         <div class="jumbotron">
-            <a href="{% url 'add_payments' %}">Adicionar Pagamento</a>
+            <h3>LOGS</h3>
             <table class="table table-condensed">
                 <thead>
                 <tr>
@@ -11,21 +11,32 @@
                     <th>Data da emissão</th>
                     <th>Data do vencimento</th>
                     <th>Valor Original</th>
+                    <th>Decisão</th>
                 </tr>
                 </thead>
                 <tbody>
-                {% if payments %}
-                    {% for payment in payments %}
+                {% if logs %}
+                    {% for payment in logs %}
                         <tr>
                             <td>{{ payment.provider }}</td>
                             <td>{{ payment.issue_date }}</td>
                             <td>{{ payment.due_date }}</td>
                             <td>{{ payment.original_value }}</td>
-                        </tr>
+                            {% if payment.decision == 0 %}
+                                <td>SEM PEDIDO</td>
+                            {% elif payment.decision == 1 %}
+                                <td>ANTECIPADO</td>
+                            {% elif payment.decision == 2 %}
+                                <td>NEGADO</td>
+                            {% elif payment.decision == 3 %}
+                                <td>AGUARDANDO CONFIRMAÇÃO</td>
+                            {% else %}
+                                <td>INDISPONÍVEL</td>
+                            {% endif %}                        </tr>
                     {% endfor %}
                 {% else %}
                     <tr>
-                        <td>Não há pagamentos!!</td>
+                        <td>Não há logs!!</td>
                     </tr>
                 {% endif %}
                 </tr>
