@@ -10,10 +10,11 @@ from .forms import PaymentsForm
 from .models import Payments, PaymentsLogs
 
 
+@login_required
 def index(request):
     template_name = 'core/index.html'
-    payments = Providers.objects.get(user=request.user.id)
-    payments = payments.payments_set.all()
+    providers = Providers.objects.get(user=request.user.id)
+    payments = providers.payments_set.all()
     date_today = datetime.datetime.now().date()
     list_payments = []
     for payment in payments:

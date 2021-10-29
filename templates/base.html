@@ -14,9 +14,6 @@
                 <i class="fa fa-home"></i>Home</a>
             </li>
             {% if user.is_superuser %}
-                <li class="nav-item"><a class="nav-link" href="{% url 'index_providers' %}">
-                    <i class="fa fa-edit"></i>Fornecedores</a>
-                </li>
                 <li class="nav-item"><a class="nav-link" href="{% url 'log_payment' %}">
                     <i class="fa fa-edit"></i>Logs</a>
                 </li>

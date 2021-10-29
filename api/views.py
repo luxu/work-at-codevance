@@ -25,12 +25,23 @@ def payments_list(request, decision):
 @api_view(['GET'])
 def request_advance(request, payment_id):
     """Solicitar à administradora a antecipação do recebível"""
-    if request.method == 'GET':
-        payment_query = Payments.objects.get(id=payment_id)
-        payment_query.decision = Payments.AGUARDANDO_CONFIRMACAO
-        payment_query.save()
-        send_email_movement(request, payment_query)
-        return Response(
-            f'{request.user}',
-            status=status.HTTP_200_OK
-        )
+    if not request.user.is_superuser:
+        if request.method == 'GET':
+            try:
+                payment_query = Payments.objects.get(id=payment_id)
+                payment_query.decision = Payments.AGUARDANDO_CONFIRMACAO
+                payment_query.save()
+                send_email_movement(request, payment_query)
+                return Response(
+                    f'{request.user}',
+                    status=status.HTTP_200_OK
+                )
+            except Payments.DoesNotExist:
+                return Response(
+                    f'Não existe pagamento para o fornecedor..: {request.user}',
+                    status=status.HTTP_400_BAD_REQUEST
+                )
+    return Response(
+        f'Desculpe, não existe pagamentos para administrador!!',
+        status=status.HTTP_400_BAD_REQUEST
+    )

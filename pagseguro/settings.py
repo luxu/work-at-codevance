@@ -115,12 +115,13 @@ AUTH_PASSWORD_VALIDATORS = [
 ]
 
 REST_FRAMEWORK = {
-    'DEFAULT_PERMISSION_CLASSES': (
-        'rest_framework.permissions.IsAuthenticated',
-    ),
     'DEFAULT_AUTHENTICATION_CLASSES': (
         'rest_framework_simplejwt.authentication.JWTAuthentication',
         'rest_framework.authentication.BasicAuthentication',
+        'rest_framework.authentication.TokenAuthentication',
+    ),
+    'DEFAULT_PERMISSION_CLASSES': (
+        'rest_framework.permissions.IsAuthenticated',
     )
 }
 
@@ -153,15 +154,11 @@ LOGIN_REDIRECT_URL = '/'
 LOGOUT_URL = '/logout'
 LOGOUT_REDIRECT_URL = '/login'
 
-EMAIL_USE_TLS = True
-EMAIL_HOST = 'smtp.gmail.com'
-EMAIL_HOST_USER = config("EMAIL_HOST_USER")
-EMAIL_HOST_PASSWORD = config("EMAIL_HOST_PASSWORD")
-EMAIL_PORT = 587
-DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
-EMAIL_USE_SSL = False
+EMAIL_USE_TLS = config("EMAIL_USE_TLS", default=False, cast=bool)
+EMAIL_HOST = config("EMAIL_HOST", '0.0.0.0')
+EMAIL_HOST_USER = config("EMAIL_HOST_USER", '')
+EMAIL_HOST_PASSWORD = config("EMAIL_HOST_PASSWORD", '')
+EMAIL_PORT = config("EMAIL_PORT", 1025, cast=int)
+DEFAULT_FROM_EMAIL = config("DEFAULT_FROM_EMAIL", 'webmaster@localhost')
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
-
-# email será enviado para o console
-# EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
