@@ -161,4 +161,6 @@ EMAIL_HOST_PASSWORD = config("EMAIL_HOST_PASSWORD", '')
 EMAIL_PORT = config("EMAIL_PORT", 1025, cast=int)
 DEFAULT_FROM_EMAIL = config("DEFAULT_FROM_EMAIL", 'webmaster@localhost')
 
+BASE_URL = config("BASE_URL", "0.0.0.0")
+
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'

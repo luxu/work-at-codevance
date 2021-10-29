@@ -28,20 +28,17 @@ def request_advance(request, payment_id):
     if not request.user.is_superuser:
         if request.method == 'GET':
             try:
-                payment_query = Payments.objects.get(id=payment_id)
+                payment_query = Payments.objects.get(Q(id=payment_id) & Q(decision=0))
                 payment_query.decision = Payments.AGUARDANDO_CONFIRMACAO
                 payment_query.save()
                 send_email_movement(request, payment_query)
-                return Response(
-                    f'{request.user}',
-                    status=status.HTTP_200_OK
-                )
+                return Response(f'Pedido enviado com sucesso!', status=status.HTTP_200_OK)
             except Payments.DoesNotExist:
                 return Response(
-                    f'Não existe pagamento para o fornecedor..: {request.user}',
+                    f'{request.user}..Este pagamento não existe!',
                     status=status.HTTP_400_BAD_REQUEST
                 )
     return Response(
-        f'Desculpe, não existe pagamentos para administrador!!',
+        f'Desculpe, não existe pagamentos para administradores!!',
         status=status.HTTP_400_BAD_REQUEST
     )

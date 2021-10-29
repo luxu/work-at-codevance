@@ -4,7 +4,6 @@ import pytest
 from django.urls import reverse
 from model_mommy import mommy
 
-from pagseguro.django_assertions import assert_contains
 from payments.models import Payments
 
 
@@ -43,15 +42,13 @@ def list_payments(client, db):
 
 
 def test_list_payments(payments):
-    assert payments is None
+    assert payments is not None
 
 
 def test_fields_payments(payment):
-    assert payment.decision == 1
-    assert payment.due_date == datetime.datetime(2020, 7, 10, 12, 56, 54, 324893)
+    assert payment.decision == 0
+    assert payment.due_date == datetime.datetime(2020, 7, 11, 12, 56, 54, 324893)
 
 
-def test_acessar_um_link_e_se_logar(list_payments):
-    # assert list_payments.status_code == 200
-    for payment in list_payments:
-        assert assert_contains(payment, "<table>")
+def test_acessar_um_link_e_não_conseguir_logar(list_payments):
+    assert list_payments.status_code == 302

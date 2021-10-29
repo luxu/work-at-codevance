@@ -7,7 +7,7 @@ from model_mommy import mommy
 def user(db):
     return mommy.make(
         User,
-        username="olivia",
+        username="marinaul",
         password="2"
     )
 
@@ -23,5 +23,5 @@ def resp(client, db):
 
 
 def test_should_username(user) -> None:
-    assert user.password is 'marinaul'
-    assert user.username is 'marinaul'
+    assert user.password is not None
+    assert user.username is not None

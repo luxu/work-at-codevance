@@ -8,7 +8,7 @@ class Payments(models.Model):
     ANTECIPADO = 1
     NEGADO = 2
     AGUARDANDO_CONFIRMACAO = 3
-    INDISPONIVEL = 3
+    INDISPONIVEL = 4
 
     DECISION_STATUS = (
         (0, "Sem pedido"),
@@ -72,7 +72,7 @@ class PaymentsLogs(models.Model):
     ANTECIPADO = 1
     NEGADO = 2
     AGUARDANDO_CONFIRMACAO = 3
-    INDISPONIVEL = 3
+    INDISPONIVEL = 4
 
     DECISION_STATUS = (
         (0, "Sem pedido"),
