@@ -41,14 +41,14 @@ Após isso será gerado mais um log e enviado um e-mail para o fornecedor inform
 
 - Recebíveis
 
-###Toda movimentação além do envio de e-mail para os fornecedores será gerado um log e salvo.
+### Toda movimentação além do envio de e-mail para os fornecedores será gerado um log e salvo.
 
 ## Uso dos endpoints
 
-###Endpoints:
- 
+### Endpoints:
+
 - Fornecedor poder acessar um status em específico
- 
+
 ````
 /api/payments/<decision>/
 ````
