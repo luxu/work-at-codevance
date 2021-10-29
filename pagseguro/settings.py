@@ -84,9 +84,19 @@ default_db_url = 'sqlite:///' + os.path.join(BASE_DIR, 'db.sqlite3')
 
 parse_database = partial(dj_database_url.parse, conn_max_age=600)
 
-DATABASES = {
-    'default': config('DATABASE_URL', default=default_db_url, cast=parse_database)
-}
+DATABASE_TO_TEST = config("ENVIROMENT")
+
+if 'test' in DATABASE_TO_TEST:
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.sqlite3',
+            'NAME': BASE_DIR / 'test_db.sqlite3',
+        }
+    }
+else:
+    DATABASES = {
+        'default': config('DATABASE_URL', default=default_db_url, cast=parse_database)
+    }
 
 AUTH_PASSWORD_VALIDATORS = [
     {

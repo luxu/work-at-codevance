@@ -1,5 +1,7 @@
+Faker==9.6.0
 flake8==3.8.4
 mccabe==0.6.1
+model-mommy==2.0.0
 pycodestyle==2.6.0
 pyflakes==2.2.0
 

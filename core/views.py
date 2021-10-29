@@ -7,7 +7,7 @@ from django.core.mail import send_mail
 from django.template.loader import render_to_string
 from django.utils.html import strip_tags
 
-from payments.models import Payments
+from payments.models import Payments, PaymentsLogs
 from .forms import LoginForm
 
 
@@ -71,6 +71,16 @@ def calculate(request):
         payment.decision = Payments.NEGADOS
         context = {}
         payment.save()
+    logs = PaymentsLogs()
+    logs.objects.create(
+        payment=payment.payment,
+        issue_date=payment.issue_date,
+        due_date=payment.due_date,
+        original_value=payment.original_value,
+        decision=payment.decision,
+        discount_value=payment.discount_value,
+        value_new=payment.value_new,
+    )
     send_email_movement(request, payment)
     return render(request, template_name, context)
 
@@ -104,8 +114,8 @@ def login_view(request):
         'message': message,
         'title': 'Login',
         'button_text': 'Entrar',
-        'link_text': 'Registrar',
-        'link_href': '/register'
+        # 'link_text': 'Registrar',
+        # 'link_href': '/register'
     }
     return render(
         request,

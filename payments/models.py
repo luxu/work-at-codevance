@@ -68,6 +68,20 @@ class Payments(models.Model):
 
 
 class PaymentsLogs(models.Model):
+    SEM_PEDIDO = 0
+    ANTECIPADO = 1
+    NEGADO = 2
+    AGUARDANDO_CONFIRMACAO = 3
+    INDISPONIVEL = 3
+
+    DECISION_STATUS = (
+        (0, "Sem pedido"),
+        (1, "Antecipado"),
+        (2, "Negado"),
+        (3, "Aguardando confirmação"),
+        (4, "Indisponível"),
+    )
+
     provider = models.ForeignKey(
         Providers,
         on_delete=models.CASCADE
@@ -80,15 +94,32 @@ class PaymentsLogs(models.Model):
         'Data do vencimento',
         null=True,
     )
+    advance_date = models.DateField(
+        'Data Antecipação',
+        null=True,
+        blank=True
+    )
     original_value = models.DecimalField(
         'Valor Original',
         max_digits=6,
         decimal_places=2,
     )
-    anticipated_amount = models.BooleanField(
-        'Valor antecipado',
-        default=False,
-        # choices=
+    decision = models.IntegerField(
+        'Decisão',
+        default=0,
+        choices=DECISION_STATUS
+    )
+    discount_value = models.DecimalField(
+        'Valor com Desconto',
+        max_digits=6,
+        decimal_places=2,
+        default=0
+    )
+    value_new = models.DecimalField(
+        'Valor Final',
+        max_digits=6,
+        decimal_places=2,
+        default=0
     )
 
     def __str__(self):
